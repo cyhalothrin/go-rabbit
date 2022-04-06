@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	exc := rabbit.Exchange{
+	exc := &rabbit.Exchange{
 		Name:       "myExc",
 		Kind:       "fanout",
 		AutoDelete: true,
@@ -18,7 +18,7 @@ func main() {
 	queue := &rabbit.Queue{
 		Name: "test-queue",
 	}
-	bind := rabbit.Binding{
+	bind := &rabbit.Binding{
 		Queue:    queue,
 		Exchange: exc,
 		Key:      "hello",
@@ -44,7 +44,6 @@ func main() {
 
 				fmt.Println("consume", string(d.Body))
 
-				//nolint:errcheck
 				_ = d.Ack(true)
 
 				return nil
@@ -69,7 +68,7 @@ func main() {
 
 	//nolint:govet
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
-	err := pub.Publish(ctx, rabbit.Envelop{
+	err := pub.Publish(ctx, &rabbit.Envelop{
 		Payload: rabbit.Publishing{
 			Body: []byte("hello"),
 		},

@@ -86,7 +86,7 @@ func (p *Publisher) Publish(ctx context.Context, msg Enveloper) error {
 	}
 }
 
-func (p *Publisher) publish(ch *amqp.Channel, envelop Envelop) error {
+func (p *Publisher) publish(ch *amqp.Channel, envelop *Envelop) error {
 	return ch.Publish(
 		envelop.Exchange,
 		envelop.Key,
@@ -106,10 +106,10 @@ func (p *Publisher) stop() {
 type publishCarrier struct {
 	// replayc channel with results of publishing
 	replayc chan error
-	payload Envelop
+	payload *Envelop
 }
 
-func newPublishCarrier(envelop Envelop) publishCarrier {
+func newPublishCarrier(envelop *Envelop) publishCarrier {
 	return publishCarrier{
 		payload: envelop,
 		// replayc is buffered channel to prevent deadlock

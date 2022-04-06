@@ -37,9 +37,9 @@ func (r *RPCServer) Handle(endpoint string, handler Handler) {
 		Exclusive:  false,
 		NoWait:     true,
 	}
-	bind := Binding{
+	bind := &Binding{
 		Queue:    queue,
-		Exchange: Exchange{Name: r.requestX},
+		Exchange: &Exchange{Name: r.requestX},
 		Key:      endpoint,
 	}
 

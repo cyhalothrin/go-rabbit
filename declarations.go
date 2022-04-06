@@ -31,7 +31,7 @@ func DeclareQueue(q *Queue) Declaration {
 	}
 }
 
-func DeclareExchange(e Exchange) Declaration {
+func DeclareExchange(e *Exchange) Declaration {
 	return func(c Declarer) error {
 		err := c.ExchangeDeclare(e.Name,
 			e.Kind,
@@ -49,7 +49,7 @@ func DeclareExchange(e Exchange) Declaration {
 	}
 }
 
-func DeclareBinding(b Binding) Declaration {
+func DeclareBinding(b *Binding) Declaration {
 	return func(c Declarer) error {
 		err := c.QueueBind(
 			b.Queue.Name,

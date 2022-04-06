@@ -62,7 +62,7 @@ func TestRPC(t *testing.T) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 
-		res, err := rpcClient.Call(ctx, endpoint, Envelop{
+		res, err := rpcClient.Call(ctx, endpoint, &Envelop{
 			Payload: Publishing{Body: []byte(clientMessage)},
 		})
 		if err != nil {

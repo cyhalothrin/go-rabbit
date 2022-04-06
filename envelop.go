@@ -9,7 +9,7 @@ import (
 // Enveloper common interface for events or RPC call, it allows you to create your own message type with custom logic
 // for handling some fields of amqp091.Publishing
 type Enveloper interface {
-	Envelop() (Envelop, error)
+	Envelop() (*Envelop, error)
 }
 
 type Envelop struct {
@@ -20,7 +20,7 @@ type Envelop struct {
 	Immediate bool
 }
 
-func (e Envelop) Envelop() (Envelop, error) {
+func (e *Envelop) Envelop() (*Envelop, error) {
 	return e, nil
 }
 

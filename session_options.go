@@ -9,6 +9,7 @@ import (
 
 type SessionOption func(*Session)
 
+//nolint:gocritic // amqp091 declares it by value
 func SessionWithConfig(conf amqp.Config) SessionOption {
 	return func(session *Session) {
 		session.conf = conf
@@ -30,9 +31,9 @@ type ConsumerConfig struct {
 }
 
 // SessionConsumerConfig consumer config
-func SessionConsumerConfig(conf ConsumerConfig) SessionOption {
+func SessionConsumerConfig(conf *ConsumerConfig) SessionOption {
 	return func(session *Session) {
-		session.consumerConf = &conf
+		session.consumerConf = conf
 	}
 }
 

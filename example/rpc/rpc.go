@@ -61,7 +61,7 @@ func main() {
 		for i := 0; i < 100; i++ {
 			//nolint:govet
 			ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-			res, err := rpcClient.Call(ctx, "hello", rabbit.Envelop{
+			res, err := rpcClient.Call(ctx, "hello", &rabbit.Envelop{
 				Payload: rabbit.Publishing{
 					Body: []byte("hello server"),
 				},

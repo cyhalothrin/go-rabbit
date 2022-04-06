@@ -32,6 +32,7 @@ type Session struct {
 	publisher    *Publisher
 }
 
+//nolint:gocritic // I don't see reason why config should be passed by pointer
 func NewSession(connectOptions ConnectionOptions, options ...SessionOption) (*Session, error) {
 	urls := connectOptions.createURLs()
 	if (len(urls)) == 0 {

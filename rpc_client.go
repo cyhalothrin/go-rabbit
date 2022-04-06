@@ -103,9 +103,9 @@ func (r *RPCClient) init() {
 
 	r.session.Declare(
 		DeclareQueue(replyQueue),
-		DeclareBinding(Binding{
+		DeclareBinding(&Binding{
 			Queue:    replyQueue,
-			Exchange: Exchange{Name: r.responseX},
+			Exchange: &Exchange{Name: r.responseX},
 			Key:      r.replyQueueName,
 			Args:     nil,
 		}),
@@ -191,6 +191,7 @@ func newCallResultListener(stopc chan struct{}, log logger) *callResultListener 
 	}
 }
 
+//nolint:gocritic
 func (c *callResultListener) Handle(delivery Delivery) *Envelop {
 	c.RLock()
 	defer c.RUnlock()

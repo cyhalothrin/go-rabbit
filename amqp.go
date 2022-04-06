@@ -21,7 +21,7 @@ type Exchange struct {
 
 type Binding struct {
 	Queue    *Queue
-	Exchange Exchange
+	Exchange *Exchange
 	Key      string
 	NoWait   bool
 	Args     amqp.Table

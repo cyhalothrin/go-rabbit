@@ -15,6 +15,7 @@ type Handler interface {
 
 type HandlerFunc func(delivery Delivery) *Envelop
 
+//nolint:gocritic // it comes by value from amqp091 library
 func (h HandlerFunc) Handle(delivery Delivery) *Envelop {
 	return h(delivery)
 }
@@ -123,6 +124,7 @@ func (c *Consumer) consume(ch *amqp.Channel) error {
 	}
 }
 
+//nolint:gocritic // it comes by value from amqp091 library
 func (c *Consumer) publishResponse(delivery Delivery, res *Envelop) {
 	if c.publisher == nil {
 		c.log.Warn(
@@ -147,7 +149,7 @@ func (c *Consumer) publishResponse(delivery Delivery, res *Envelop) {
 	ctx, cancel := context.WithTimeout(context.Background(), c.rpcResponsePublishTimeout)
 	defer cancel()
 
-	err := c.publisher.Publish(ctx, *res)
+	err := c.publisher.Publish(ctx, res)
 	if err != nil {
 		c.sendErr(fmt.Errorf("publish RPC response: %w", err))
 	}

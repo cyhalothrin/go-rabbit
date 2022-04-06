@@ -11,13 +11,13 @@ import (
 var devRabbitConnection = ConnectionOptions{
 	IPs:         []string{"10.252.16.116"},
 	Port:        5672,
-	VirtualHost: "dev-onetech",
-	User:        "dev-onetech",
-	Password:    "IshaiS9i",
+	VirtualHost: "",
+	User:        "",
+	Password:    "",
 }
 
 func TestPubSub(t *testing.T) {
-	exc := Exchange{
+	exc := &Exchange{
 		Name:       "amqp-lib-test-x",
 		Kind:       "topic",
 		AutoDelete: true,
@@ -28,7 +28,7 @@ func TestPubSub(t *testing.T) {
 		AutoDelete: true,
 		Durable:    false,
 	}
-	bind := Binding{
+	bind := &Binding{
 		Queue:    queue,
 		Exchange: exc,
 		Key:      "hello",
@@ -74,7 +74,7 @@ func TestPubSub(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	err = pub.Publish(ctx, Envelop{
+	err = pub.Publish(ctx, &Envelop{
 		Payload: Publishing{
 			Body: []byte(helloMsg),
 		},
