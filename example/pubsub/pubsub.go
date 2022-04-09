@@ -38,7 +38,7 @@ func main() {
 	sess.Declare(rabbit.DeclareExchange(exc), rabbit.DeclareQueue(queue), rabbit.DeclareBinding(bind))
 	sess.AddConsumer(
 		rabbit.NewConsumer(
-			rabbit.HandlerFunc(func(d rabbit.Delivery) *rabbit.Envelop {
+			rabbit.HandlerFunc(func(d rabbit.Delivery) rabbit.Enveloper {
 				// possible panic if, for some reason, rabbit has 2 messages
 				defer close(donec)
 

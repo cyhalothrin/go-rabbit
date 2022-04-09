@@ -87,3 +87,17 @@ Call session.Start() after all consumers and publishers are declared, but only c
 
 ## RPC
 See the [examples](example/rpc) directory for more details.
+
+## Tests
+
+Run rabbit:
+
+```
+make rabbit
+```
+
+and tests:
+
+```
+make test
+```

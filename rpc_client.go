@@ -192,7 +192,7 @@ func newCallResultListener(stopc chan struct{}, log logger) *callResultListener 
 }
 
 //nolint:gocritic
-func (c *callResultListener) Handle(delivery Delivery) *Envelop {
+func (c *callResultListener) Handle(delivery Delivery) Enveloper {
 	c.RLock()
 	defer c.RUnlock()
 

@@ -10,13 +10,13 @@ import (
 )
 
 type Handler interface {
-	Handle(delivery Delivery) *Envelop
+	Handle(delivery Delivery) Enveloper
 }
 
-type HandlerFunc func(delivery Delivery) *Envelop
+type HandlerFunc func(delivery Delivery) Enveloper
 
 //nolint:gocritic // it comes by value from amqp091 library
-func (h HandlerFunc) Handle(delivery Delivery) *Envelop {
+func (h HandlerFunc) Handle(delivery Delivery) Enveloper {
 	return h(delivery)
 }
 
@@ -125,7 +125,7 @@ func (c *Consumer) consume(ch *amqp.Channel) error {
 }
 
 //nolint:gocritic // it comes by value from amqp091 library
-func (c *Consumer) publishResponse(delivery Delivery, res *Envelop) {
+func (c *Consumer) publishResponse(delivery Delivery, envelope Enveloper) {
 	if c.publisher == nil {
 		c.log.Warn(
 			"unexpected response from handler tag: ",
@@ -135,6 +135,13 @@ func (c *Consumer) publishResponse(delivery Delivery, res *Envelop) {
 			", routing_key: ",
 			delivery.ReplyTo,
 		)
+
+		return
+	}
+
+	res, err := envelope.Envelop()
+	if err != nil {
+		c.sendErr(fmt.Errorf("publish RPC response: %w", err))
 
 		return
 	}
@@ -149,7 +156,7 @@ func (c *Consumer) publishResponse(delivery Delivery, res *Envelop) {
 	ctx, cancel := context.WithTimeout(context.Background(), c.rpcResponsePublishTimeout)
 	defer cancel()
 
-	err := c.publisher.Publish(ctx, res)
+	err = c.publisher.Publish(ctx, res)
 	if err != nil {
 		c.sendErr(fmt.Errorf("publish RPC response: %w", err))
 	}

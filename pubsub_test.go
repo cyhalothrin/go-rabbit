@@ -1,57 +1,63 @@
-package rabbit
+package rabbit_test
 
 import (
 	"context"
-	"log"
+	"fmt"
 	"testing"
 	"time"
+
+	"github.com/cyhalothrin/go-rabbit"
 )
 
 //nolint:gochecknoglobals
-var devRabbitConnection = ConnectionOptions{
-	IPs:         []string{"10.252.16.116"},
+var devRabbitConnection = rabbit.ConnectionOptions{
+	IPs:         []string{"localhost"},
 	Port:        5672,
-	VirtualHost: "",
-	User:        "",
-	Password:    "",
+	VirtualHost: "vhost",
+	User:        "test",
+	Password:    "test",
 }
 
 func TestPubSub(t *testing.T) {
-	exc := &Exchange{
+	exc := &rabbit.Exchange{
 		Name:       "amqp-lib-test-x",
 		Kind:       "topic",
 		AutoDelete: true,
 		Durable:    false,
 	}
-	queue := &Queue{
+	queue := &rabbit.Queue{
 		Name:       "amqp-lib-test-queue",
 		AutoDelete: true,
 		Durable:    false,
 	}
-	bind := &Binding{
+	bind := &rabbit.Binding{
 		Queue:    queue,
 		Exchange: exc,
 		Key:      "hello",
 	}
 
-	helloMsg := "hello-" + genRandomString(16)
+	helloMsg := "hello"
 	consumeResult := make(chan string, 1)
 
-	sess, err := NewSession(devRabbitConnection, SessionMaxAttempts(1), SessionLog(&testLog{}, true))
+	sess, err := rabbit.NewSession(
+		devRabbitConnection,
+		rabbit.SessionMaxAttempts(1),
+		rabbit.SessionLog(&testLog{}, true),
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	sess.Declare(DeclareExchange(exc), DeclareQueue(queue), DeclareBinding(bind))
+	sess.Declare(rabbit.DeclareExchange(exc), rabbit.DeclareQueue(queue), rabbit.DeclareBinding(bind))
 	sess.AddConsumer(
-		NewConsumer(
-			HandlerFunc(func(d Delivery) *Envelop {
+		rabbit.NewConsumer(
+			rabbit.HandlerFunc(func(d rabbit.Delivery) rabbit.Enveloper {
 				consumeResult <- string(d.Body)
 
 				return nil
 			}),
 			queue,
-			ConsumerAutoAck(),
+			rabbit.ConsumerAutoAck(),
 		))
 
 	pub := sess.Publisher()
@@ -74,8 +80,8 @@ func TestPubSub(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	err = pub.Publish(ctx, &Envelop{
-		Payload: Publishing{
+	err = pub.Publish(ctx, &rabbit.Envelop{
+		Payload: rabbit.Publishing{
 			Body: []byte(helloMsg),
 		},
 		Exchange: exc.Name,
@@ -100,17 +106,17 @@ func TestPubSub(t *testing.T) {
 type testLog struct{}
 
 func (t *testLog) Debug(args ...interface{}) {
-	log.Println(args...)
+	fmt.Println(args...)
 }
 
 func (t *testLog) Info(args ...interface{}) {
-	log.Println(args...)
+	fmt.Println(args...)
 }
 
 func (t *testLog) Warn(args ...interface{}) {
-	log.Println(args...)
+	fmt.Println(args...)
 }
 
 func (t *testLog) Error(args ...interface{}) {
-	log.Println(args...)
+	fmt.Println(args...)
 }

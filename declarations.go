@@ -27,7 +27,11 @@ func DeclareQueue(q *Queue) Declaration {
 		)
 		q.Name = realQ.Name
 
-		return fmt.Errorf("declare queue '%s': %w", q.Name, err)
+		if err != nil {
+			return fmt.Errorf("declare queue '%s': %w", q.Name, err)
+		}
+
+		return nil
 	}
 }
 

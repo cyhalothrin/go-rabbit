@@ -24,7 +24,7 @@ func main() {
 		rabbit.RPCServerRequestX("X:routing.topic"),
 		rabbit.RPCServerResponseX("X:gateway.out.fanout"),
 	)
-	rpcSrv.Handle("hello", rabbit.HandlerFunc(func(delivery rabbit.Delivery) *rabbit.Envelop {
+	rpcSrv.Handle("hello", rabbit.HandlerFunc(func(delivery rabbit.Delivery) rabbit.Enveloper {
 		log.Println("request:", string(delivery.Body))
 
 		return &rabbit.Envelop{
