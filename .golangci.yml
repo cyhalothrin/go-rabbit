@@ -1,0 +1,50 @@
+linters-settings:
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - experimental
+      - opinionated
+      - performance
+      - style
+    disabled-checks:
+      - whyNoLint
+  goimports:
+    local-prefixes: github.com/cyhalothrin/go-rabbit
+  govet:
+    check-shadowing: true
+  lll:
+    line-length: 140
+  nolintlint:
+    require-specific: true
+
+linters:
+  disable-all: true
+  enable:
+    - asciicheck
+    - errcheck
+    - exportloopref
+    - goimports
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - nolintlint
+    - staticcheck
+    - structcheck
+    - typecheck
+    - unconvert
+    - unparam
+    - gocritic
+    - lll
+    - deadcode
+    - varcheck
+    - nakedret
+    - unused
+    - gofmt
+    # revive
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - gomnd
