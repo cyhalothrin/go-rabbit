@@ -24,6 +24,8 @@ func (e *Envelop) Envelop() (*Envelop, error) {
 	return e, nil
 }
 
+var _ Enveloper = &Envelop{}
+
 type JSONEnvelop struct {
 	Payload   JSONPublishing
 	Exchange  string
@@ -32,16 +34,16 @@ type JSONEnvelop struct {
 	Immediate bool
 }
 
-func (j *JSONEnvelop) Envelop() (Envelop, error) {
+func (j *JSONEnvelop) Envelop() (*Envelop, error) {
 	body, err := json.Marshal(j.Payload.Data)
 	if err != nil {
-		return Envelop{}, err
+		return nil, err
 	}
 
 	pub := j.Payload.Publishing
 	pub.Body = body
 
-	return Envelop{
+	return &Envelop{
 			Payload:   pub,
 			Exchange:  j.Exchange,
 			Key:       j.Key,
@@ -50,6 +52,8 @@ func (j *JSONEnvelop) Envelop() (Envelop, error) {
 		},
 		nil
 }
+
+var _ Enveloper = &JSONEnvelop{}
 
 type JSONPublishing struct {
 	amqp.Publishing
