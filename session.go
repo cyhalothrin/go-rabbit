@@ -157,7 +157,8 @@ func (s *Session) loop() (bool, error) {
 
 		return true, nil
 	}
-	s.log.Debug("connected to ", s.urls[s.serverNum], " attempt:", s.attempts)
+
+	s.log.Info("connected to ", s.urls[s.serverNum], " attempt:", s.attempts)
 
 	s.conn = conn
 	s.attempts = 0
@@ -190,6 +191,8 @@ func (s *Session) loop() (bool, error) {
 	}
 
 	if s.publisher != nil {
+		s.publisher.stop()
+
 		if isChannelUsed {
 			// create new channel for publisher
 			ch, err = conn.Channel()
@@ -218,13 +221,7 @@ func (s *Session) configureConsumerChannel(ch *amqp.Channel) error {
 }
 
 func (s *Session) watchConnection(conn *amqp.Connection) {
-	defer func() {
-		s.nextLoop()
-
-		if s.publisher != nil {
-			s.publisher.stop()
-		}
-	}()
+	defer s.nextLoop()
 
 	reason, ok := <-conn.NotifyClose(make(chan *amqp.Error))
 	if !ok {
